@@ -11,6 +11,4 @@ Users can see current conditions, forecasts for several days ahead, as well as h
   
 ## Video demonstration
 
-[![Video demonstration of the application](https://img.youtube.com/vi/xMSFakzIqvs/0.jpg)](https://www.youtube.com/watch?v=xMSFakzIqvs)
-
-
+![Запись экрана 2024-08-22 в 23 17 13](https://github.com/user-attachments/assets/491405dd-00fd-44a5-aec5-37909851a270)
