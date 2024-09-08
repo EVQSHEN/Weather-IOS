@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import Weather from './screens/weather';
 import Search from './screens/search';
 import StartScreen from './screens/startScreen';
@@ -10,12 +11,13 @@ import Error from './screens/error';
 
 const App: React.FC = () => {
   const Stack = createNativeStackNavigator();
-  const [isFirstLaunch, setIsFirstLaunch] = useState<boolean | null>(null);
+  const [isFirstLaunch, setIsFirstLaunch] = React.useState<boolean | null>(null);
 
-  useEffect(() => {
+  React.useEffect(() => {
     const checkFirstLaunch = async () => {
       try {
         const hasLaunched = await AsyncStorage.getItem('hasLaunched');
+
         if (hasLaunched === null) {
           await AsyncStorage.setItem('hasLaunched', 'true');
           setIsFirstLaunch(true);

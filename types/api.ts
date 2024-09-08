@@ -1,8 +1,8 @@
-export type WeatherForCityResponseType = {
+export interface WeatherForCityResponseType {
   data: WeatherForCityType;
-};
+}
 
-export type WeatherForCityType = {
+export interface WeatherForCityType {
   uv_index: number;
   coord: {
     lon: number;
@@ -51,15 +51,9 @@ export type WeatherForCityType = {
   id: number;
   name: string;
   cod: number;
-};
+}
 
-export type getForecastCityPropsType = {
-  city: string;
-  lat: number;
-  lon: number;
-};
-
-export type ForecastForCityType = {
+export interface HourlyForecastType {
   dt: number;
   sunrise: number;
   sunset: number;
@@ -104,9 +98,9 @@ export type ForecastForCityType = {
     sea_level: number;
     grnd_level: number;
   };
-};
+}
 
-export type DayliForecastType = {
+export interface DayliForecastType {
   map(arg0: (day: any, indx: any) => import('react').JSX.Element): import('react').ReactNode;
   lat: number;
   lon: number;
@@ -179,9 +173,9 @@ export type DayliForecastType = {
       uvi: number;
     },
   ];
-};
+}
 
-export type citylistType = {
+export interface citylistType {
   name: string;
   country: string;
-};
+}

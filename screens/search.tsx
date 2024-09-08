@@ -13,26 +13,28 @@ import {
   Keyboard,
   Animated,
 } from 'react-native';
-import { citylistType } from 'ts/api';
-import { getCityList } from '../assets/api/api';
-import { getMyFavoriteСities } from 'assets/utils';
-import { SearchCityBlock, Icon } from '../components/';
+import { citylistType } from 'types/api';
+import { getCityList } from 'api/api';
+import { getMyFavoriteСities } from 'utils';
+import { SearchCityBlock, Icon } from 'components';
 
 const Search = () => {
   const navigation: any = useNavigation();
+
+  const [searchValue, setSearchValue] = React.useState('');
   const [cityList, setCityList] = React.useState<citylistType[] | []>([]);
   const [subscribe, setSubscribe] = React.useState<{ city: string }[]>([]);
-  const [searchValue, setSearchValue] = React.useState('');
   const [isKeyboardVisible, setKeyboardVisible] = React.useState(false);
+
   const opacityAnim = React.useRef(new Animated.Value(1)).current;
   const translateY = React.useRef(new Animated.Value(0)).current;
 
-  const handleOpenSettings = () => {
+  function handleOpenSettings() {
     Linking.openSettings();
-  };
+  }
 
-  const getLocation = async () => {
-    let { status } = await Location.requestForegroundPermissionsAsync();
+  async function getLocation() {
+    const { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== 'granted') {
       Alert.alert(
         'Permission to access location was denied',
@@ -42,21 +44,28 @@ const Search = () => {
           { text: 'Open Settings', onPress: handleOpenSettings },
         ],
       );
-      return;
     }
+
     const location = await Location.getCurrentPositionAsync({});
+
     navigation.navigate('Weather', {
-      myParam: {
+      coords: {
         lat: location.coords.latitude.toFixed(2),
         lon: location.coords.longitude.toFixed(2),
       },
     });
-  };
+  }
+
+  async function getMyFavoriteСitiesFunc() {
+    const data = await getMyFavoriteСities();
+
+    setSubscribe(data);
+  }
 
   useFocusEffect(
     React.useCallback(() => {
       setSearchValue('');
-      getMyFavoriteСities(setSubscribe);
+      getMyFavoriteСitiesFunc();
     }, []),
   );
 
@@ -76,40 +85,54 @@ const Search = () => {
   }, [navigation]);
 
   React.useEffect(() => {
-    getMyFavoriteСities(setSubscribe);
+    getMyFavoriteСitiesFunc();
   }, [subscribe.length]);
 
   React.useEffect(() => {
-    searchValue !== '' && getCityList(searchValue, setCityList);
+    async function getCityListFunc(value: string) {
+      const data = await getCityList(value);
+
+      setCityList(data);
+    }
+
+    if (searchValue !== '') {
+      getCityListFunc(searchValue);
+    }
   }, [searchValue]);
 
   React.useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
       setKeyboardVisible(true);
+
       Animated.timing(opacityAnim, {
         toValue: 0,
         duration: 200,
         useNativeDriver: true,
       }).start();
+
       Animated.timing(translateY, {
         toValue: -50,
         duration: 300,
         useNativeDriver: false,
       }).start();
     });
+
     const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
       setKeyboardVisible(false);
+
       Animated.timing(opacityAnim, {
         toValue: 1,
         duration: 200,
         useNativeDriver: true,
       }).start();
+
       Animated.timing(translateY, {
         toValue: 0,
         duration: 300,
         useNativeDriver: false,
       }).start();
     });
+
     return () => {
       keyboardDidShowListener.remove();
       keyboardDidHideListener.remove();
@@ -134,7 +157,7 @@ const Search = () => {
                   searchValue && cityList && isKeyboardVisible ? 'rounded-t-xl' : 'rounded-xl'
                 } ${isKeyboardVisible ? '' : 'mr-2'}`}
               >
-                <Icon name="search" width="28" height="26" classComponent="ml-2" />
+                <Icon name="Search" stroke="white" className="ml-3" />
                 <TextInput
                   placeholder="Search"
                   value={searchValue}
@@ -148,7 +171,7 @@ const Search = () => {
                   className="w-10 h-10 bg-lime-400 flex items-center justify-center rounded-full  pt-1"
                   onPress={() => getLocation()}
                 >
-                  <Icon name="location" width="28" height="28" />
+                  <Icon name="Location" width="28" height="28" stroke="white" />
                 </TouchableOpacity>
               )}
             </View>
@@ -163,24 +186,20 @@ const Search = () => {
                     onPress={() => {
                       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                       navigation.navigate('Weather', {
-                        myParam: {
+                        coords: {
                           value: el.name,
                         },
                       });
                     }}
                   >
                     <View className="flex-row items-center">
-                      <Text key={el.name} className="text-white p-3 pr-2 text-lg">
-                        {el.name}
-                      </Text>
-                      <Text key={el.country} className="text-gray-400 text-base">
-                        {el.country}
-                      </Text>
+                      <Text className="text-white p-3 pr-2 text-lg">{el.name}</Text>
+                      <Text className="text-gray-400 text-base">{el.country}</Text>
                     </View>
                   </TouchableOpacity>
                 ))}
             </View>
-            {isKeyboardVisible && <View className="absole w-full h-screen bg-black -z-10"></View>}
+            {isKeyboardVisible && <View className="absole w-full h-screen bg-black -z-10" />}
           </Animated.View>
         </SafeAreaView>
         <FlatList

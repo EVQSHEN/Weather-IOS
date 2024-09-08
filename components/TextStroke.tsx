@@ -1,16 +1,23 @@
 import * as React from 'react';
 import { Children, cloneElement, isValidElement } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { TextStrokeParams } from 'ts';
+
+interface Props {
+  children: any;
+  color: string;
+  stroke: number;
+}
+
 const styles = StyleSheet.create({
   outline: {
     position: 'absolute',
   },
 });
 
-export class TextStroke extends React.Component<TextStrokeParams> {
+export class TextStroke extends React.Component<Props> {
   createClones = (w: number, h: number, color?: string) => {
     const { children } = this.props;
+
     return Children.map(children, (child) => {
       if (isValidElement(child)) {
         const currentProps = child.props as any;
@@ -28,8 +35,10 @@ export class TextStroke extends React.Component<TextStrokeParams> {
             textShadowRadius: 1,
           },
         };
+
         return cloneElement(child, newProps);
       }
+
       return child;
     });
   };

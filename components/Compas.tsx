@@ -1,18 +1,24 @@
 import { Text } from 'react-native';
 import { Image, View, StyleSheet, Dimensions } from 'react-native';
-import { CompasProps } from 'ts';
+import { Icon } from './Icon';
 const { height } = Dimensions.get('window');
 
-export const Compas: React.FC<CompasProps> = ({ angle }) => {
+interface Props {
+  angle: number;
+}
+
+export const Compas: React.FC<Props> = ({ angle }) => {
   return (
-    <View className="bg-zinc-900 w-[calc(50%-1.2%)] mr-2 rounded-2xl h-48 py-2 px-6">
+    <View className="bg-zinc-900 w-[48.8%] mr-2 rounded-2xl h-48 py-2 px-6">
       <Text className="text-zinc-500 text-lg font-medium">Wind</Text>
       <View>
         {Number.isInteger(angle) && (
           <View style={styles.row}>
             <View style={styles.compassWrapper}>
-              <Image
-                source={require('../assets/img/arrow.png')}
+              <Icon
+                name="Arrow"
+                width={28}
+                height={28}
                 style={[styles.arrow, { transform: [{ rotate: angle - 180 + 'deg' }] }]}
               />
               <Image
